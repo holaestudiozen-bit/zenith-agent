@@ -6,6 +6,12 @@ export interface OobeSecrets {
   oobeKey?: string;
 }
 
+async function importRuntime(path: string): Promise<any> {
+  // Use runtime import so TypeScript does not require private/unexported SDK
+  // subpath declarations during the paper-mode build.
+  return Function("p", "return import(p)")(path);
+}
+
 /**
  * Thin boundary around the official OOBE SDK.
  *
@@ -25,7 +31,7 @@ export class OobeExecutor implements TradeExecutor {
       throw new Error("LIVE_MODE_REQUIRES_LOCAL_SECRETS");
     }
 
-    const mod: any = await import("oobe-protocol");
+    const mod: any = await importRuntime("oobe-protocol");
     const ConfigManager = mod.ConfigManager;
     const OobeCore = mod.OobeCore;
 
@@ -45,11 +51,16 @@ export class OobeExecutor implements TradeExecutor {
 
     const agent = core.getAgent();
 
-    // OOBE's tool factory is exposed through a package subpath in the
-    // official SDK. Import lazily so paper mode has zero wallet dependency.
-    const toolsMod: any = await import("oobe-protocol/config/tool/index.tool");
-    const tools = await toolsMod.createSolanaTools(agent);
+    const toolsMod: any = await importRuntime(
+      "oobe-protocol/config/tool/index.tool"
+    );
 
+    if (typeof toolsMod.createSolanaTools !== "function") {
+      await core.stop();
+      throw new Error("OOBE_SOLANA_TOOL_FACTORY_NOT_FOUND");
+    }
+
+    const tools = await toolsMod.createSolanaTools(agent);
     return new OobeExecutor(core, tools);
   }
 
