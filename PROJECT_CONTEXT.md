@@ -1,23 +1,21 @@
 # ZENITH — Project Context
 
-ZENITH is an autonomous risk-first agent project prepared for Steve Agent Arena.
+ZENITH is an autonomous risk-first Solana agent prepared for Steve Agent Arena.
 
 ## Goal
 Build a functional, auditable autonomous agent with deterministic risk controls and a competitive public submission.
 
 ## Core proposition
-Probabilistic intelligence, deterministic safety.
+**Probabilistic intelligence, deterministic safety.**
 
 ## Architecture
-- Scout: identifies candidate opportunities.
-- Analyst: evaluates market regime, momentum, volatility, liquidity and confidence.
-- Risk Guardian: evaluates proposed exposure.
+- Scout / Analysis: identifies candidate opportunities.
+- Regime classifier: TREND, RANGE or CHAOS.
 - Risk Governor: hard deterministic gate that no model can bypass.
-- Executor: executes only approved actions.
-- Memory/Telemetry: records decisions, rejections, outcomes and risk metrics.
+- Executor: paper-mode executor plus a fail-closed OOBE Protocol live adapter.
+- Memory / Telemetry: records decisions, rejections, outcomes and risk metrics.
 
 ## Risk policy
-Initial conservative defaults:
 - Maximum risk budget per operation: 0.5% of managed capital.
 - Daily loss stop: 2%.
 - Maximum concurrent positions: 3.
@@ -27,20 +25,34 @@ Initial conservative defaults:
 - Automatic kill switch.
 - CHAOS regime permits NO TRADE as a valid decision.
 
-All parameters remain configurable and must be validated before any real-capital use.
+## OOBE integration
+The repository uses the official OOBE Protocol SDK package (v2.0.2). Live initialization is isolated behind `src/oobeAdapter.ts` and loaded only when live mode is explicitly selected.
+
+Private keys and API keys remain local environment variables and are never stored in the repository.
+
+The concrete Steve Agent Arena transaction call is deliberately not guessed. Live execution remains fail-closed until the official Arena action path is verified.
 
 ## Operating rules
 - Never store private keys, seed phrases, passwords or API secrets in this repository.
 - Never claim performance, winnings or payments without verifiable evidence.
 - Real-money transactions require explicit human authorization.
-- Development and testing should use simulation/test environments wherever possible.
+- Development and demonstrations default to simulation/paper mode.
 - Keep this project completely separate from Estudio Zen.
 
-## Competition
-Prize pool discussed for Steve Agent Arena: 500 USDC total, with placement awards rather than a guaranteed payment. Current rules/deadlines must be re-verified before final submission.
+## Competition facts last verified 2026-09-24
+- Steve Agent Arena is a global Superteam bounty by OOBE Protocol.
+- Total prizes: 500 USDC.
+- Awards displayed: 250 USDC / 150 USDC / 100 USDC.
+- Superteam displayed 45 submissions.
+- Winner announcement is scheduled for October 4, 2026.
 
-## Workstreams already independent of ZENITH
-Other bounty work is intentionally not part of this repository. ZENITH remains isolated.
-
-## Status
-Repository initialized. Architecture and implementation scaffold are next.
+## Current status
+- Public repository: ready.
+- Core strategy: implemented.
+- Risk Governor: implemented.
+- Paper executor: implemented.
+- Tests: implemented.
+- CI: configured.
+- OOBE integration boundary: implemented.
+- Submission document: implemented.
+- Live Arena binding: blocked only on confirmation of the exact competition execution flow and human-authorized wallet/API credentials if required.
